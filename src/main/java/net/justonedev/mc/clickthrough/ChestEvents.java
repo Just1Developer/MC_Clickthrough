@@ -29,7 +29,6 @@ public class ChestEvents implements Listener {
         Block attached = frame.getLocation().getBlock().getRelative(frame.getAttachedFace());
         if (!(attached.getState() instanceof BlockInventoryHolder holder)) return;
 
-        //*
         // Cancelling the event does not actually cancel the interaction
         // So, we freeze the frame for one (1) tick
         if (!frame.isFixed()) {
@@ -44,17 +43,7 @@ public class ChestEvents implements Listener {
                 }
                 frame.setFixed(false);
             }, 1);
-        }//*/
-
-
-
-        /*
-        // Cancelling the event does not actually cancel the interaction
-        // So, we freeze the frame for one (1) tick
-        if (!frame.isFixed()) {
-            frame.setFixed(true);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> frame.setFixed(false), 1);
-        }*/
+        }
 
 
         e.setCancelled(true);
