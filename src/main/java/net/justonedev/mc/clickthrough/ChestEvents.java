@@ -8,9 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
-import org.bukkit.metadata.FixedMetadataValue;
-
-import java.util.UUID;
 
 public class ChestEvents implements Listener {
 
@@ -31,19 +28,9 @@ public class ChestEvents implements Listener {
         // Cancelling the event does not actually cancel the interaction
         // So, we freeze the frame for one (1) tick
         if (!frame.isFixed()) {
-            final String metadata = UUID.randomUUID().toString();
-            frame.setMetadata("clickthrough-unfreeze", new FixedMetadataValue(plugin, metadata));
             frame.setFixed(true);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                if (frame.hasMetadata("clickthrough")) {
-                    // Some other thread "reserved" it and is going to unfreeze it
-                    // This is basically in case two people click on the chest at the same time
-                    if (!frame.getMetadata("clickthrough").getFirst().asString().equals(metadata)) return;
-                }
-                frame.setFixed(false);
-            }, 1);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> frame.setFixed(false), 1);
         }
-
 
         e.setCancelled(true);
         e.getPlayer().openInventory(holder.getInventory());
