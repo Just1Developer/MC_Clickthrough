@@ -5,8 +5,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Clickthrough extends JavaPlugin {
 
-    public static boolean enabled = true;
-
     @Override
     public void onEnable() {
         // Plugin startup logic
