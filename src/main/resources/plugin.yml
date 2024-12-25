@@ -1,0 +1,5 @@
+name: Clickthrough
+version: '1.0-SNAPSHOT'
+main: net.justonedev.mc.clickthrough.Clickthrough
+api-version: '1.21'
+author: JustOneDeveloper
