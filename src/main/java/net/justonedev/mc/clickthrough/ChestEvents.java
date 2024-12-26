@@ -1,7 +1,10 @@
 package net.justonedev.mc.clickthrough;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -35,8 +38,11 @@ public class ChestEvents implements Listener {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> frame.setFixed(false), 1);
         }
 
-        e.setCancelled(true);
-        e.getPlayer().openInventory(holder.getInventory());
+        boolean open = canOpenContainer(attached, holder);
+        if (open) {
+            e.setCancelled(true);
+            e.getPlayer().openInventory(holder.getInventory());
+        }
     }
 
     @EventHandler
@@ -45,13 +51,41 @@ public class ChestEvents implements Listener {
         Block rightClicked = e.getClickedBlock();
         if (rightClicked == null) return;   // To appease IntelliJ
 
-        if (!(rightClicked.getState() instanceof WallSign)) return;
+        if (!(rightClicked.getBlockData() instanceof WallSign)) return;
         if (e.getPlayer().isSneaking()) return;
-        Block attached = rightClicked.getLocation().getBlock().getRelative(((WallSign) rightClicked).getFacing().getOppositeFace());
+        Block attached = rightClicked.getLocation().getBlock().getRelative(((WallSign) rightClicked.getBlockData()).getFacing().getOppositeFace());
         if (!(attached.getState() instanceof BlockInventoryHolder holder)) return;
 
-        e.setCancelled(true);
-        e.getPlayer().openInventory(holder.getInventory());
+        boolean open = canOpenContainer(attached, holder);
+        if (open) {
+            e.setCancelled(true);
+            e.getPlayer().openInventory(holder.getInventory());
+        }
+    }
+
+    private boolean canOpenContainer(Block container, BlockInventoryHolder holder) {
+        if (container.getType().equals(Material.CHEST) || container.getType().equals(Material.TRAPPED_CHEST)) {
+            // Determine if it's obstructed (Stuff like stairs or leaves don't obstruct chests)
+            if (container.getRelative(BlockFace.UP).getType().isOccluding()) return false;
+            if (holder.getInventory().getHolder() instanceof DoubleChest doubleChest) {
+                Block otherHalf = findOtherChestHalf(container, doubleChest);
+                if (otherHalf != null && otherHalf.getRelative(BlockFace.UP).getType().isOccluding()) return false;
+            }
+        }
+        return true;
+    }
+
+    private Block findOtherChestHalf(Block container, DoubleChest doublechest) {
+        for (BlockFace face : new BlockFace[]{BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST}) {
+            Block neighbor = container.getRelative(face);
+            if (!neighbor.getType().equals(container.getType())) continue;
+            if (((BlockInventoryHolder)(neighbor.getState())).getInventory().getHolder() instanceof DoubleChest neighborDoubleChest) {
+                if (doublechest.getLeftSide() != null && doublechest.getLeftSide().equals(neighborDoubleChest.getLeftSide())) {
+                    return neighbor;
+                }
+            }
+        }
+        return null;
     }
 
 }
