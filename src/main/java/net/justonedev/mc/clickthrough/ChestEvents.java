@@ -2,7 +2,10 @@ package net.justonedev.mc.clickthrough;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.DoubleChest;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.EntityType;
