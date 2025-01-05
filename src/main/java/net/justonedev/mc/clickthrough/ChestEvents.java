@@ -74,7 +74,7 @@ public class ChestEvents implements Listener {
                 if (otherHalf != null && otherHalf.getRelative(BlockFace.UP).getType().isOccluding()) return false;
             }
 
-            if (container.getType().toString().endsWith("SHULKER_BOX")) {
+            if (holder instanceof ShulkerBox shulkerBox) {
                 BlockState state = container.getState();
                 BlockFace facing = ((Directional) state.getBlockData()).getFacing();
                 return !container.getRelative(facing).getType().isOccluding();
