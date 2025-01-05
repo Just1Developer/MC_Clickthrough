@@ -5,6 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.ShulkerBox;
+import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -70,6 +72,11 @@ public class ChestEvents implements Listener {
             if (holder.getInventory().getHolder() instanceof DoubleChest doubleChest) {
                 Block otherHalf = findOtherChestHalf(container, doubleChest);
                 if (otherHalf != null && otherHalf.getRelative(BlockFace.UP).getType().isOccluding()) return false;
+            }
+
+            if (holder instanceof ShulkerBox shulkerBox) {
+                BlockFace facing = ((Directional) shulkerBox.getBlockData()).getFacing();
+                return !container.getRelative(facing).getType().isOccluding();
             }
         }
         return true;
