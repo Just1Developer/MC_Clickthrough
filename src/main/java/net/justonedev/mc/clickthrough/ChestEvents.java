@@ -2,10 +2,7 @@ package net.justonedev.mc.clickthrough;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.DoubleChest;
+import org.bukkit.block.*;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.EntityType;
@@ -75,8 +72,7 @@ public class ChestEvents implements Listener {
             }
 
             if (holder instanceof ShulkerBox shulkerBox) {
-                BlockState state = container.getState();
-                BlockFace facing = ((Directional) holder.getBlockData()).getFacing();
+                BlockFace facing = ((Directional) shulkerBox.getBlockData()).getFacing();
                 return !container.getRelative(facing).getType().isOccluding();
             }
         }
