@@ -1,5 +1,7 @@
 name: Clickthrough
-version: '1.1-SNAPSHOT'
+version: '1.2-SNAPSHOT'
 main: net.justonedev.mc.clickthrough.Clickthrough
 api-version: '1.21'
 author: JustOneDeveloper
+commands:
+  clickthrough:

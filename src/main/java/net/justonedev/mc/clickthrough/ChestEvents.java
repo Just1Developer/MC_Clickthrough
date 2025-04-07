@@ -27,6 +27,7 @@ public class ChestEvents implements Listener {
 
     @EventHandler
     public void onClickItemFrame(final PlayerInteractAtEntityEvent e) {
+        if (!Clickthrough.isEnableFrameClickthrough) return;
         if (e.getRightClicked().getType() != EntityType.ITEM_FRAME && e.getRightClicked().getType() != EntityType.GLOW_ITEM_FRAME) return;
         if (e.getPlayer().isSneaking()) return;
         ItemFrame frame = (ItemFrame) e.getRightClicked();
@@ -49,6 +50,7 @@ public class ChestEvents implements Listener {
 
     @EventHandler
     public void onClickSign(final PlayerInteractEvent e) {
+        if (!Clickthrough.isEnableSignClickthrough) return;
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
         Block rightClicked = e.getClickedBlock();
         if (rightClicked == null) return;   // To appease IntelliJ
