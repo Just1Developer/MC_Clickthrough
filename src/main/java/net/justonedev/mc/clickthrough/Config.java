@@ -16,6 +16,7 @@ public class Config {
             // Default Values are already set
             cfg.set("Enable Item Frame Clickthrough", Clickthrough.ENABLE_FRAME_CLICKTHROUGH);
             cfg.set("Enable Sign Clickthrough", Clickthrough.ENABLE_SIGN_CLICKTHROUGH);
+            cfg.set("No permission message (%s is command, put \"\" for no message)", Clickthrough.NO_PERM_MESSAGE);
             saveCfg(f, cfg);
             return;
         }
@@ -24,18 +25,27 @@ public class Config {
 
         Clickthrough.isEnableFrameClickthrough = getOrDefaultBoolean("Enable Item Frame Clickthrough", cfg, updateThese, Clickthrough.ENABLE_FRAME_CLICKTHROUGH);
         Clickthrough.isEnableSignClickthrough = getOrDefaultBoolean("Enable Sign Clickthrough", cfg, updateThese, Clickthrough.ENABLE_SIGN_CLICKTHROUGH);
+        Clickthrough.noPermissionMessage = getOrDefaultString("No permission message (%s is command, put \"\" for no message)", cfg, updateThese, Clickthrough.NO_PERM_MESSAGE);
 
         if (updateThese.isEmpty()) return;
         cfg = YamlConfiguration.loadConfiguration(f);	// Reload config
-        for (Map.Entry<String, Object> entry : updateThese.entrySet()) {
-            cfg.set(entry.getKey(), entry.getValue());
-        }
+        YamlConfiguration finalCfg = cfg;
+        updateThese.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(e -> {
+            finalCfg.set(e.getKey(), e.getValue());
+        });
         saveCfg(f, cfg);
     }
 
     private static boolean getOrDefaultBoolean(String key, YamlConfiguration cfg, Map<String, Object> updateThese, boolean defaultValue)
     {
         if (cfg.isSet(key)) return cfg.getBoolean(key);
+        updateThese.put(key, defaultValue);
+        return defaultValue;
+    }
+
+    private static String getOrDefaultString(String key, YamlConfiguration cfg, Map<String, Object> updateThese, String defaultValue)
+    {
+        if (cfg.isSet(key)) return cfg.getString(key);
         updateThese.put(key, defaultValue);
         return defaultValue;
     }

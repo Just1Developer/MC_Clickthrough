@@ -25,6 +25,9 @@ public final class Clickthrough extends JavaPlugin implements CommandExecutor, T
     public static boolean isEnableFrameClickthrough = ENABLE_FRAME_CLICKTHROUGH;
     public static boolean isEnableSignClickthrough = ENABLE_SIGN_CLICKTHROUGH;
 
+    public static final String NO_PERM_MESSAGE = "§cUnknown or incomplete command, see below for error%n§c§n%s§r§o§c<--[HERE]";
+    public static String noPermissionMessage = NO_PERM_MESSAGE;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -48,6 +51,12 @@ public final class Clickthrough extends JavaPlugin implements CommandExecutor, T
     @Override
     public boolean onCommand(@Nonnull CommandSender sender, @Nonnull Command cmd, @Nonnull String label, @Nonnull String[] args) {
         if (!(sender instanceof ConsoleCommandSender) && !sender.isOp()) {
+            if (noPermissionMessage.isBlank()) return false;
+            String command = cmd.getName();
+            if (args.length > 0) {
+                command += " " + String.join(" ", args);
+            }
+            sender.sendMessage(noPermissionMessage.formatted(String.join(" ", command)));
             return false;
         }
         if (args.length != 1 || !args[0].equalsIgnoreCase("reload")) {
@@ -55,14 +64,14 @@ public final class Clickthrough extends JavaPlugin implements CommandExecutor, T
             return false;
         }
         Config.initialize();
-        sender.sendMessage("Clickthrough Config reloaded:%n§eEnable Item Frame Clickthrough: %s%b%n§eEnable Sign Clickthrough: %s%b"
-                .formatted(color(isEnableFrameClickthrough), isEnableFrameClickthrough, color(isEnableSignClickthrough), isEnableSignClickthrough));
+        sender.sendMessage("§e§lClickthrough Config reloaded:%n§r§eEnable Item Frame Clickthrough: %s%b%n§eEnable Sign Clickthrough: %s%b%n§eNo Permission Message: §6%s"
+                .formatted(color(isEnableFrameClickthrough), isEnableFrameClickthrough, color(isEnableSignClickthrough), isEnableSignClickthrough, noPermissionMessage));
         return true;
     }
 
     @Override
     public List<String> onTabComplete(@Nonnull CommandSender sender, @Nonnull Command cmd, @Nonnull String label, String[] args) {
-        if (args.length == 1) {
+        if ((sender instanceof ConsoleCommandSender || sender.isOp()) && args.length == 1) {
             return Stream.of("reload").filter(s -> s.startsWith(args[0])).toList();
         }
         return null;
